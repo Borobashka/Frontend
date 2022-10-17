@@ -14,13 +14,13 @@ const Search = () => {
       </svg>
       <input
         value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)}
+        onChange={(event) => setSearchValue(event.target.value)} // при вводе текста в input, значение сохраняется в контекст
         className={styles.input}
         placeholder="Поиск пиццы..."
       />
       {searchValue && (
         <img
-          onClick={() => setSearchValue('')}
+          onClick={() => setSearchValue('')} // если кликнуть на крестик, то в input присваивается пустое значение
           className={styles.clearIcon}
           src={closeSvg}
           alt="close"
