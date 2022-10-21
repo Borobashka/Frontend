@@ -1,9 +1,34 @@
 import React from 'react';
+import debounce from 'lodash.debounce';
 import styles from './Search.module.scss';
 import closeSvg from '../../assets/img/close.svg';
 import { SearchContext } from '../../App';
+
 const Search = () => {
-  const {searchValue,setSearchValue} = React.useContext(SearchContext);
+  const [value, setValue] = React.useState('');
+  const { setSearchValue } = React.useContext(SearchContext);
+  const inputRef = React.useRef();
+
+  const updateSearchValue = React.useCallback(
+    debounce((str) => {
+      setSearchValue(str);
+    }, 500),
+    [],
+  );
+
+  const onChangeInput = event => {
+    setValue(event.target.value)
+    updateSearchValue(event.target.value)
+  }
+
+  const onClickClear = () => {
+    setSearchValue('');
+    setValue('');
+    inputRef.current.focus();
+  };
+
+  React.useEffect(() => {}, []);
+
   return (
     <div className={styles.root}>
       <svg className={styles.icon} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -13,14 +38,15 @@ const Search = () => {
         </g>
       </svg>
       <input
-        value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)} // при вводе текста в input, значение сохраняется в контекст
+        ref={inputRef}
+        value={value}
+        onChange={onChangeInput} // при вводе текста в input, значение сохраняется в контекст
         className={styles.input}
         placeholder="Поиск пиццы..."
       />
-      {searchValue && (
+      {SearchContext && (
         <img
-          onClick={() => setSearchValue('')} // если кликнуть на крестик, то в input присваивается пустое значение
+          onClick={onClickClear} // если кликнуть на крестик, то в input присваивается пустое значение
           className={styles.clearIcon}
           src={closeSvg}
           alt="close"

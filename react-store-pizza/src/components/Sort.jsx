@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {setSort} from '../redux/slices/filterSlice'
-
+import { setSort } from '../redux/slices/filterSlice';
 
 const list = [
   { name: 'популярности (DESC)', sortProperty: 'rating' },
@@ -15,6 +14,7 @@ const list = [
 export default function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
+  const sortRef = React.useRef();
 
   const [open, setOpen] = React.useState(false);
 
@@ -23,8 +23,18 @@ export default function Sort() {
     setOpen(false);
   };
 
+  //при клике вне области выпадающего блока выбора сортировки, он будет скрываться
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      let path = event.composedPath().includes(sortRef.current); // event.path уже устаревший метод, в хроме будет работать, в firefox столкнетесь с ошибкой. Решение: использовать composedPath.
+      if (!path) setOpen(false);
+    };
+    document.body.addEventListener('click', handleClickOutside);
+    return () => document.body.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
